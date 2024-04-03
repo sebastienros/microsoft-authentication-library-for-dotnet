@@ -158,8 +158,10 @@ csharp_style_implicit_object_creation_when_type_is_apparent = true:suggestion
 csharp_style_prefer_tuple_swap = true:suggestion
 csharp_style_prefer_utf8_string_literals = true:suggestion
 
-# C++ Files
+# Compiler warnings that trigger SDL
+dotnet_diagnostic.CS0618.severity = error
 
+# C++ Files
 
 [*.{cpp,h,in}]
 curly_bracket_next_line = true
@@ -187,66 +189,76 @@ end_of_line = lf
 [*.{cmd, bat}]
 end_of_line = crlf
 
-# MSAL Async Rules
-# Description: MSAL rules.
+# Thread analyzer rules https://github.com/microsoft/vs-threading/blob/main/doc/analyzers/index.md
 
 # Code files
 [*.{cs,vb}]
 
 end_of_line = crlf
 
-# Async Threading Rules
-
-# Use Async suffix for async methods
-dotnet_diagnostic.VSTHRD200.severity = error
-
-# Use .ConfigureAwait(bool)
-dotnet_diagnostic.VSTHRD111.severity = error
-
-# Avoid async void methods
-dotnet_diagnostic.VSTHRD100.severity = warning
-
-# Critical Threading Rules
+# Critical
 
 # Avoid legacy thread switching methods
-dotnet_diagnostic.VSTHRD001.severity = warning
+dotnet_diagnostic.VSTHRD001.severity = none # MSAL annot use JoinableTaskFactory (part of a different package)
 
 # Avoid problematic synchronous waits
-dotnet_diagnostic.VSTHRD002.severity = none
+dotnet_diagnostic.VSTHRD002.severity = error
 
 # Avoid awaiting foreign Tasks
-dotnet_diagnostic.VSTHRD003.severity = none
+dotnet_diagnostic.VSTHRD003.severity = error
 
 # Await SwitchToMainThreadAsync
 dotnet_diagnostic.VSTHRD004.severity = error
 
 # Invoke single-threaded types on Main thread
-dotnet_diagnostic.VSTHRD010.severity = warning
+dotnet_diagnostic.VSTHRD010.severity = error
 
 # Use AsyncLazy<T>
 dotnet_diagnostic.VSTHRD011.severity = none #error requires the use of Microsoft.VisualStudio.Threading to get access to the AsyncLazy<T> type
 
 # Provide JoinableTaskFactory where allowed
-dotnet_diagnostic.VSTHRD012.severity = warning
+dotnet_diagnostic.VSTHRD012.severity = error
 
-# Compiler warnings that trigger SDL
-dotnet_diagnostic.CS0618.severity = error
+# Advisory
 
-# General Threading Rules
+# Avoid async void methods
+dotnet_diagnostic.VSTHRD100.severity = error
 
-# VSTHRD103: Call async methods when in an async method
-dotnet_diagnostic.VSTHRD103.severity = none
+# Avoid unsupported async delegates
+dotnet_diagnostic.VSTHRD101.severity = error
 
-# VSTHRD105: use current context
-dotnet_diagnostic.VSTHRD105.severity = none
+# Call async methods when in an async method
+dotnet_diagnostic.VSTHRD103.severity = error
 
-# VSTHRD001: use JoinableTaskFactory (this is part of a different package - MSAL cannot use it)
-dotnet_diagnostic.VSTHRD001.severity = none
+# Avoid method overloads that assume TaskScheduler.Current
+dotnet_diagnostic.VSTHRD105.severity = error
 
+# Use InvokeAsync to raise async events	
+dotnet_diagnostic.VSTHRD106.severity = error
 
+# Await Task within using expression	
+dotnet_diagnostic.VSTHRD107.severity = error
 
-# VSTHRD110: Observe result of async calls
-dotnet_diagnostic.VSTHRD110.severity = none
+# Assert thread affinity unconditionally	
+dotnet_diagnostic.VSTHRD108.severity = error
+
+# Switch instead of assert in async methods	
+dotnet_diagnostic.VSTHRD109.severity = error
+
+# Observe result of async calls
+dotnet_diagnostic.VSTHRD110.severity = error
+
+# Use .ConfigureAwait(bool)
+dotnet_diagnostic.VSTHRD111.severity = error
+
+# Avoid returning null from a Task-returning method.
+dotnet_diagnostic.VSTHRD114.severity = error
+
+# Guideline
+
+# Use Async suffix for async methods
+dotnet_diagnostic.VSTHRD200.severity = error
+
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------#
 # Rules from aspnet
