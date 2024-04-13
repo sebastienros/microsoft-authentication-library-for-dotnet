@@ -30,7 +30,7 @@ namespace Microsoft.Identity.Test.Integration.Infrastructure
 
             // ~2x faster, no visual rendering
             // remove when debugging to see the UI automation
-            //options.AddArguments("headless");
+            options.AddArguments("headless");
 
             var env = Environment.GetEnvironmentVariable("EDGEWEBDRIVER");
             if (string.IsNullOrEmpty(env))
@@ -43,8 +43,16 @@ namespace Microsoft.Identity.Test.Integration.Infrastructure
             }
 
             driver.Manage().Timeouts().ImplicitWait = ImplicitTimespan;
-            driver.Manage().Window.Maximize();
 
+            try
+            {
+                driver.Manage().Window.Maximize();
+            }
+            catch (WebDriverException e)
+            {
+                Trace.WriteLine("Failed to maximize the window: " + e.Message);
+            }
+            
             return driver;
         }
 
@@ -62,7 +70,7 @@ namespace Microsoft.Identity.Test.Integration.Infrastructure
 #endif
 
             Trace.WriteLine($"Saving picture to {failurePicturePath}");
-            ss.SaveAsFile(failurePicturePath, ScreenshotImageFormat.Png);
+            ss.SaveAsFile(failurePicturePath);
 
 #if DESKTOP // Can't attach a file to the logs on netcore because mstest doesn't support it
             testContext.AddResultFile(failurePicturePath);
@@ -180,11 +188,30 @@ namespace Microsoft.Identity.Test.Integration.Infrastructure
         {
             UserInformationFieldIds fields = new UserInformationFieldIds(user);
 
+            HandlePrompt(driver, "otherTile");
             EnterUsername(driver, user, withLoginHint, adfsOnly, fields);
+            HandlePrompt(driver, CoreUiTestConstants.NextButton);
             EnterPassword(driver, user, fields);
 
             HandleConsent(driver, user, fields, prompt);
             HandleStaySignedIn(driver);
+        }
+
+        private static void HandlePrompt(IWebDriver driver, string id)
+        {
+            try
+            {
+                Trace.WriteLine("Finding next prompt");
+                var nextBtn = driver.WaitForElementToBeVisibleAndEnabled(
+                    ByIds(id),
+                    waitTime: ShortExplicitTimespan,
+                    ignoreFailures: true);
+                nextBtn?.Click();
+            }
+            catch
+            {
+                Trace.WriteLine($"{id} not found. Moving on.");
+            }
         }
 
         private static void HandleStaySignedIn(IWebDriver driver)

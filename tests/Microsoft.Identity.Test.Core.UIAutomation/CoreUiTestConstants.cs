@@ -70,6 +70,8 @@ namespace Microsoft.Identity.Test.UIAutomation.Infrastructure
         public const string ConsentAcceptId = "idBtn_Accept";
         public const string PasswordInput = "password";
         public const string AlternativePasswordInput = "Passwd";
+        public const string NextButton = "nextButton";
+        public const string OtherTile = "otherTile";
 
         // ADFSv2 fields
         public const string AdfsV2WebUsernameInputId = "ContentPlaceHolder1_UsernameTextBox";
