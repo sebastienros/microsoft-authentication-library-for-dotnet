@@ -93,7 +93,9 @@ namespace Microsoft.Identity.Client.Platforms.Shared.Desktop.OsBrowser
             {
                 throw new MsalClientException(
                     MsalError.LoopbackRedirectUri,
-                    $"Only loopback redirect uri is supported, but {redirectUri.AbsoluteUri} was found. Configure http://localhost or http://localhost:port both during app registration and when you create the PublicClientApplication object. See https://aka.ms/msal-net-os-browser for details");
+                    $"Only loopback redirect uri is supported, but {redirectUri.AbsoluteUri} was found. Configure http://localhost or http://localhost:port both during app registration and when you create the PublicClientApplication object. \n" +
+                    $"UWP applications seeing this error should take note that MSAL no longer supports UWP starting with version 4.61.0 - see https://devblogs.microsoft.com/identity/uwp-xamarin-msal-net-deprecation/ \n" +
+                    $"More details at https://aka.ms/msal-net-os-browser for details");
             }
 
             // AAD does not allow https:\\localhost redirects from any port
